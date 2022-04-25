@@ -6,8 +6,8 @@ Boston University <br>
 Spring 2022 <br>
 <br>
 
-Hasnain Abdur Rehman
-Darya Smolina
+*Hasnain Abdur Rehman* <br>
+*Darya Smolina* <br>
 
 ---
 
