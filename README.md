@@ -1,13 +1,13 @@
 # EC503_Circulant_NN
 
-Class Project for EC503: Learning from Data <br>
+EC503: Learning from Data <br>
 by Francesco Orabona <br>
 Boston University <br>
 Spring 2022 <br>
 <br>
 
-*Hasnain Abdur Rehman* <br>
-*Darya Smolina* <br>
+***Hasnain Abdur Rehman <br>
+Darya Smolina*** <br>
 
 ---
 
