@@ -1,65 +1,52 @@
-%{
-#############################
-Forward Propagation
-#############################
-
-  a           =   W        *      x  
-[m x 1]        [m x n]         [n x 1]    
-(output)       (weights)        (input)
-
-where p = m/k, 
-      q = n/k,
-      
-W --> partitioned into circulant submatrices,
-such that W = [w_ij] where,
-i is 1:p and j is 1:q
-
-& hence 
-x is partitioned to 1:q
-
-%}
-
-function [a,b] = forwardprop(W,x,p,q,k)
-a = zeros(q);
-b = zeros(p,q);
+function [act_2, act_3, act_4] = forwardprop_circnn(W_12,W_23,W_34,act_1,k)
+% Forward Propagation 
 
 
-for i = 1:p 
-   for j = 1:q 
-       a(:,i) = a(:,i) + W(i,j)*x(j);
-   end
-end
-
-end
-%%
-for i = 1:p
-    for j = 1:q
-        b(:,i) = b(:,i) + ifft(fft(W(i,j)).*fft(x(j)));
+% Activations for Hidden Layer 1
+[d,m] = size(W_12);
+p = d;
+q = m/k;
+act_2 = zeros(p*k,1);
+for i = 1 : p
+    temp = zeros(k,1);
+    for j = 1 : q
+        temp = temp + ifft(fft(W_12(i,(j-1)*k+1: j*k)') .* fft(act_1((j-1)*k +1: j*k,:)));
     end
+    act_2((k*(i-1))+1: i*k,:) = temp;
 end
+% Add 5 Bias Neurons
+act_2 = [1; 1; 1; 1; 1; ReLU(act_2)];
+
+% Activations for Hidden Layer 2
+[d,m] = size(W_23);
+p = d;
+q = m/k;
+act_3 = zeros(p*k,1);
+for i = 1 : p
+    temp = zeros(k,1);
+    for j = 1 : q
+        temp = temp + ifft(fft(W_23(i,(j-1)*k+1: j*k)') .* fft(act_2((j-1)*k +1: j*k,:)));
+    end
+    act_3((k*(i-1))+1: i*k,:) = temp;
 end
+% Add 5 Bias Neurons
+act_3 = [1; 1; 1; 1; 1; ReLU(act_3)];
 
 
-%{
-a = zeros(k*p);
-b = zeros(k*p);
-%P = m/k
-%Q = n/k
-%x is 1:q
-%K = block size(size of each sub matrix)
-%W = m by n weight matrix that is partitioned into square submatrix (each submatrix is a circulant matrix)
-%So W = Wij where i is 1:p and j is 1:q
-%A (o/p) = p rows by q columns
-%A = Wx = col vector a1…ap 
-%for i = 1:p 
- %  for j = 1:q 
-  %     a(i:(i+k)) = a(i:(i+k)) + W(i,j)*x(j);
-  % end
-%end
-%end
-%for i = 1:p
- %   for j = 1:q
-  %      b(i) = b(i) + ifft(fft(W(i,j)).*fft(x(j)));
-   % end
-%end
-%}
+% Activations for Hidden Layer 1
+[d,m] = size(W_34);
+p = d;
+q = m/k;
+act_4 = zeros(p*k,1);
+
+for i = 1 : p
+    temp = zeros(k,1);
+    for j = 1 : q
+        temp = temp + ifft(fft(W_34(i,(j-1)*k+1: j*k)') .* fft(act_3((j-1)*k +1: j*k,:)));
+    end
+    act_4((k*(i-1))+1: i*k,:) = temp;
+end
+act_4 = softmax(act_4);
+
+end
+
